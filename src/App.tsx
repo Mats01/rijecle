@@ -94,7 +94,7 @@ function App() {
 
   }, [word]);
 
-  const checkWord = useCallback(async () => {
+  const checkWord = () => {
     let isWord = getWiktionary();
     if (!isWord) {
       alert('Nije u popisu riječi.');
@@ -110,7 +110,7 @@ function App() {
       return;
     } else {
 
-      let target = wordOfTheDay;
+      let target = [...wordOfTheDay];
 
 
 
@@ -144,7 +144,7 @@ function App() {
     setColors(['white', 'white', 'white', 'white', 'white']);
     setWord([]);
 
-  }, [word, colors, previousWords, correct, incorrect, getWiktionary, wordOfTheDay]);
+  }
 
   const acceptLetter = useCallback((key: string) => {
     if (key === 'Backspace') {
@@ -158,7 +158,7 @@ function App() {
         setWord([...word, key]);
       }
     }
-  }, [word, checkWord]);
+  }, [word]); // eslint-disable-line
 
 
 
