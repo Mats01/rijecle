@@ -1,8 +1,11 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Keyboard from './Keyboard';
 
 const isAlpha = (ch: string): boolean => {
+  if (ch === 'lj') return true;
+  if (ch === 'nj') return true;
   return /^[A-ZŠĐŽČĆ]$/i.test(ch);
 }
 
@@ -35,6 +38,15 @@ const styles = {
     flexDirection: 'row' as 'row',
     margin: 'auto',
   },
+  keyboardContainer: {
+    position: 'absolute' as 'absolute',
+    bottom: 20,
+    left: 20,
+    width: '100%',
+    display: 'flex',
+    alighItems: 'center',
+
+  },
 }
 
 function App() {
@@ -51,19 +63,23 @@ function App() {
   //   }
   // }, [previousWords]);
 
-  const getKey = useCallback(
+  const acceptLetter = useCallback((key: string) => {
+    if (key === 'Backspace') {
+      setWord(word.slice(0, -1));
+    }
+    if (key === 'Enter') {
+      word.length === 5 && checkWord();
+    }
+    else if (isAlpha(key)) {
+      if (word.length < 5) {
+        setWord([...word, key]);
+      }
+    }
+  }, [word]);
+
+  const getKeyFromPhisycalKeyboard = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Backspace') {
-        setWord(word.slice(0, -1));
-      }
-      if (e.key === 'Enter') {
-        word.length === 5 && checkWord();
-      }
-      else if (isAlpha(e.key)) {
-        if (word.length < 5) {
-          setWord([...word, e.key]);
-        }
-      }
+      acceptLetter(e.key);
     }, [word])
 
   const getWiktionary = async (): Promise<boolean> => {
@@ -131,9 +147,9 @@ function App() {
   }
 
   useEffect(() => {
-    document.addEventListener('keydown', getKey);
+    document.addEventListener('keydown', getKeyFromPhisycalKeyboard);
     return () => {
-      document.removeEventListener('keydown', getKey);
+      document.removeEventListener('keydown', getKeyFromPhisycalKeyboard);
     }
 
   }, [word])
@@ -145,6 +161,11 @@ function App() {
         <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
       ))}
       <Guesses word={word} colors={colors} />
+      <div
+        style={styles.keyboardContainer}
+      >
+        <Keyboard correct={[]} incorrect={[]} sendKeyPress={(key) => acceptLetter(key)} />
+      </div>
     </div >
   );
 }
