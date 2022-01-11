@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import './App.css';
 import Keyboard from './Keyboard';
+import { sveHrvRijeci } from './sveHrvRijeci';
 
 const isAlpha = (ch: string): boolean => {
   if (ch === 'lj') return true;
@@ -66,29 +67,30 @@ function App() {
 
 
 
-  const getWiktionary = async (): Promise<boolean> => {
-    return fetch(`https://hr.wiktionary.org/w/api.php?action=query&titles=${word.join("")}&prop=revisions&rvprop=content&format=json&origin=*`)
-      .then(
-        (response) =>
-          response.json()
-      ).then((data) => {
-        let pages = data.query.pages;
-        let firstKey = Object.keys(pages)[0];
-        if (firstKey === '-1') return false;
-        try {
-          return data.query.pages[Object.keys(data.query.pages)[0]].revisions[0]['*'].includes("{{hrvatski jezik}}");
-        } catch (e) {
-          return false;
-        }
-      }).catch((error) => {
-        console.log(error);
-        return false;
-      })
+  const getWiktionary = (): boolean => {
+    // return fetch(`https://hr.wiktionary.org/w/api.php?action=query&titles=${word.join("")}&prop=revisions&rvprop=content&format=json&origin=*`)
+    //   .then(
+    //     (response) =>
+    //       response.json()
+    //   ).then((data) => {
+    //     let pages = data.query.pages;
+    //     let firstKey = Object.keys(pages)[0];
+    //     if (firstKey === '-1') return false;
+    //     try {
+    //       return data.query.pages[Object.keys(data.query.pages)[0]].revisions[0]['*'].includes("{{hrvatski jezik}}");
+    //     } catch (e) {
+    //       return false;
+    //     }
+    //   }).catch((error) => {
+    //     console.log(error);
+    //     return false;
+    //   })
+    return sveHrvRijeci.includes(word.join(""))
 
   }
 
   const checkWord = useCallback(async () => {
-    let isWord = await getWiktionary();
+    let isWord = getWiktionary();
     if (!isWord) {
       alert('Nije u popisu riječi.');
       return;
@@ -185,10 +187,6 @@ function App() {
         {previousWords.map((guess, index) => (
           <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
         ))}
-        <Guesses word={word} colors={colors} />
-        <Guesses word={word} colors={colors} />
-        <Guesses word={word} colors={colors} />
-        <Guesses word={word} colors={colors} />
         <Guesses word={word} colors={colors} />
       </div>
       <div
