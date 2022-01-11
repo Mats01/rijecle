@@ -6,6 +6,9 @@ const isAlpha = (ch: string): boolean => {
   return /^[A-ZŠĐŽČĆ]$/i.test(ch);
 }
 
+const GREEN = '#6ff573';
+const YELLOW = '#f8f86c';
+const GREY = '#aaa';
 
 const styles = {
   app: {
@@ -16,11 +19,16 @@ const styles = {
     padding: 60,
   },
   container: {
-    border: '1px solid black',
+    border: '1px solid rgb(155,155,155)',
     width: 40,
     height: 50,
     margin: 5,
     fontSize: 30,
+    display: 'flex',
+    textAlign: 'center' as 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    boxShadow: '1px 1px 2px 2px rgba(55,55,55,0.1)',
   },
   wrapper: {
     display: 'flex',
@@ -49,7 +57,7 @@ function App() {
         setWord(word.slice(0, -1));
       }
       if (e.key === 'Enter') {
-        checkWord();
+        word.length === 5 && checkWord();
       }
       else if (isAlpha(e.key)) {
         if (word.length < 5) {
@@ -59,14 +67,19 @@ function App() {
     }, [word])
 
   const getWiktionary = async (): Promise<boolean> => {
-    return fetch(`https://en.wiktionary.org/w/api.php?action=query&titles=${word.join("")}&prop=revisions&rvprop=content&format=json&origin=*`)
+    return fetch(`https://hr.wiktionary.org/w/api.php?action=query&titles=${word.join("")}&prop=revisions&rvprop=content&format=json&origin=*`)
       .then(
         (response) =>
           response.json()
       ).then((data) => {
         let pages = data.query.pages;
         let firstKey = Object.keys(pages)[0];
-        return firstKey !== '-1';
+        if (firstKey === '-1') return false;
+        try {
+          return data.query.pages[Object.keys(data.query.pages)[0]].revisions[0]['*'].includes("{{hrvatski jezik}}");
+        } catch (e) {
+          return false;
+        }
       }).catch((error) => {
         console.log(error);
         return false;
@@ -77,26 +90,39 @@ function App() {
   const checkWord = async () => {
     let isWord = await getWiktionary();
     if (!isWord) {
-      alert('Nije rijec');
+      alert('Nije u popisu riječi.');
       return;
     }
     let newColors = colors;
-    if (word === wordOfTheDay) {
+    if (word.join('') === wordOfTheDay.join('')) {
+      console.log('Pobijedili ste');
       alert('Bravo');
-      setColors(['green', 'green', 'green', 'green', 'green']);
+      setColors([GREEN, GREEN, GREEN, GREEN, GREEN]);
+      return;
     } else {
 
-      newColors = colors.map((color, index) => {
-        if (wordOfTheDay[index] === word[index]) {
-          return 'green';
-        } else if (wordOfTheDay.includes(word[index])) {
-          return 'yellow';
-        } else {
-          return 'gray';
+      let target = wordOfTheDay;
+
+      newColors = [GREY, GREY, GREY, GREY, GREY];
+      for (let i = 0; i < word.length; i++) {
+        if (word[i] === target[i]) {
+          newColors[i] = GREEN;
+          target[i] = '_';
         }
-      })
+
+      }
+      for (let i = 0; i < word.length; i++) {
+        if (target.includes(word[i])) {
+          newColors[i] = YELLOW;
+        }
+      }
 
 
+
+    }
+    if (previousWords.length > 5) {
+      alert('Ostali ste bez pokušaja, rijec je bila: ' + wordOfTheDay.join(''));
+      return;
     }
     setPreviousWords([...previousWords, { word: word, colors: newColors }]);
     setColors(['white', 'white', 'white', 'white', 'white']);
@@ -115,8 +141,8 @@ function App() {
   return (
     <div className="App" style={styles.app}>
       <h1>Rijecle</h1>
-      {previousWords.map((guess) => (
-        <Guesses word={guess.word} colors={guess.colors} />
+      {previousWords.map((guess, index) => (
+        <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
       ))}
       <Guesses word={word} colors={colors} />
     </div >
