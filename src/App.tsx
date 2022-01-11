@@ -49,7 +49,12 @@ const styles = {
 
 function App() {
 
-  const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
+  // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
+  const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
+  useEffect(() => {
+    let w = sveHrvRijeci[Math.floor(Math.random() * sveHrvRijeci.length)];
+    setWordOfTheDay(w.split(''));
+  }, []);
 
   const [word, setWord] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>(['white', 'white', 'white', 'white', 'white']);
@@ -67,7 +72,7 @@ function App() {
 
 
 
-  const getWiktionary = (): boolean => {
+  const getWiktionary = useCallback((): boolean => {
     // return fetch(`https://hr.wiktionary.org/w/api.php?action=query&titles=${word.join("")}&prop=revisions&rvprop=content&format=json&origin=*`)
     //   .then(
     //     (response) =>
@@ -87,7 +92,7 @@ function App() {
     //   })
     return sveHrvRijeci.includes(word.join(""))
 
-  }
+  }, [word]);
 
   const checkWord = useCallback(async () => {
     let isWord = getWiktionary();
@@ -139,7 +144,7 @@ function App() {
     setColors(['white', 'white', 'white', 'white', 'white']);
     setWord([]);
 
-  }, [word, colors, previousWords, correct, incorrect, getWiktionary]); // eslint-disable-line
+  }, [word, colors, previousWords, correct, incorrect, getWiktionary, wordOfTheDay]);
 
   const acceptLetter = useCallback((key: string) => {
     if (key === 'Backspace') {
