@@ -1,23 +1,32 @@
 import React, { FC } from 'react'
-
+import { GREEN, GREY } from './App'
 
 const styles = {
   wrapper: {
     display: 'flex',
     flexDirection: 'column' as 'column',
     margin: 'auto',
+    width: '98%',
+    maxWidth: '600px',
   },
   row: {
     display: 'flex',
     flexDirection: 'row' as 'row',
+    justifyContent: 'center',
+    alignItems: 'space-between',
     margin: 'auto',
+    flex: 1,
+    width: '100%',
+    marginBottom: 10,
   },
   key: {
     border: '1px solid rgb(155,155,155)',
-    width: 40,
+    maxWidth: 40,
+    minWidth: 20,
+    flexGrow: 1,
     height: 50,
-    margin: 5,
-    fontSize: 30,
+    margin: 2,
+    fontSize: '1rem',
     display: 'flex',
     textAlign: 'center' as 'center',
     justifyContent: 'center' as 'center',
@@ -38,45 +47,62 @@ const Keyboard: FC<{ correct: string[], incorrect: string[], sendKeyPress: (key:
   return (
     <>
       <div style={styles.wrapper}>
+
         <div style={styles.row}>
           <>
             {firstRow.map(key => (
-              <div style={styles.key} key={key} className='key'
+              <div
+                style={{ ...styles.key, backgroundColor: correct.includes(key) ? GREEN : incorrect.includes(key) ? GREY : 'white' }}
+                key={key} className='key'
                 onClick={() => sendKeyPress(key)}
               >
                 {key}
               </div>
             ))}
           </>
-          <div
-            style={{ ...styles.key, width: 80 }}
-            onClick={() => sendKeyPress('Backspace')}
-          >{'<---'}</div>
+
         </div>
-        <div style={{ ...styles.row, marginLeft: 20 }}>
+        <div style={{ ...styles.row }}>
           <>
             {secondRow.map(key => (
-              <div style={styles.key} key={key} className='key'
+              <div
+                style={{ ...styles.key, backgroundColor: correct.includes(key) ? GREEN : incorrect.includes(key) ? GREY : 'white' }}
+                key={key} className='key'
                 onClick={() => sendKeyPress(key)}
               >
                 {key}
               </div>
             ))}
           </>
-          <div
-            style={{ ...styles.key, width: 80 }}
-            onClick={() => sendKeyPress('Enter')}
-          >{'Enter'}</div>
+
         </div>
         <div style={styles.row}>
-          {thirdRow.map(key => (
-            <div style={styles.key} key={key} className='key'
-              onClick={() => sendKeyPress(key)}
-            >
-              {key}
-            </div>
-          ))}
+          <>
+            {thirdRow.map(key => (
+              <div
+                style={{ ...styles.key, backgroundColor: correct.includes(key) ? GREEN : incorrect.includes(key) ? GREY : 'white' }}
+
+                key={key} className='key'
+                onClick={() => sendKeyPress(key)}
+              >
+                {key}
+              </div>
+            ))}
+          </>
+
         </div>
+        <div style={{ ...styles.row }}>
+
+          <div
+            style={{ ...styles.key, minWidth: 100, flexGrow: 3 }}
+            onClick={() => sendKeyPress('Enter')}
+          >{'Provjeri'}</div>
+          <div
+            style={{ ...styles.key, minWidth: 100, flexGrow: 3 }}
+            onClick={() => sendKeyPress('Backspace')}
+          >{'Obriši'}</div>
+        </div>
+
       </div>
     </>
   )

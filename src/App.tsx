@@ -1,5 +1,4 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Keyboard from './Keyboard';
 
@@ -9,9 +8,9 @@ const isAlpha = (ch: string): boolean => {
   return /^[A-ZŠĐŽČĆ]$/i.test(ch);
 }
 
-const GREEN = '#6ff573';
-const YELLOW = '#f8f86c';
-const GREY = '#aaa';
+export const GREEN = '#6ff573';
+export const YELLOW = '#f8f86c';
+export const GREY = '#aaa';
 
 const styles = {
   app: {
@@ -19,7 +18,6 @@ const styles = {
     flexDirection: 'column' as 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 60,
   },
   container: {
     border: '1px solid rgb(155,155,155)',
@@ -36,12 +34,11 @@ const styles = {
   wrapper: {
     display: 'flex',
     flexDirection: 'row' as 'row',
-    margin: 'auto',
+    margin: '0 auto',
   },
   keyboardContainer: {
     position: 'absolute' as 'absolute',
     bottom: 20,
-    left: 20,
     width: '100%',
     display: 'flex',
     alighItems: 'center',
@@ -56,6 +53,8 @@ function App() {
   const [word, setWord] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>(['white', 'white', 'white', 'white', 'white']);
   const [previousWords, setPreviousWords] = useState<{ word: string[], colors: string[] }[]>([]);
+  const [correct, setCorrect] = useState<string[]>([]);
+  const [incorrect, setIncorrect] = useState<string[]>([]);
 
   // useEffect(() => {
   //   if (previousWords.length > 5) {
@@ -63,24 +62,9 @@ function App() {
   //   }
   // }, [previousWords]);
 
-  const acceptLetter = useCallback((key: string) => {
-    if (key === 'Backspace') {
-      setWord(word.slice(0, -1));
-    }
-    if (key === 'Enter') {
-      word.length === 5 && checkWord();
-    }
-    else if (isAlpha(key)) {
-      if (word.length < 5) {
-        setWord([...word, key]);
-      }
-    }
-  }, [word]);
 
-  const getKeyFromPhisycalKeyboard = useCallback(
-    (e: KeyboardEvent) => {
-      acceptLetter(e.key);
-    }, [word])
+
+
 
   const getWiktionary = async (): Promise<boolean> => {
     return fetch(`https://hr.wiktionary.org/w/api.php?action=query&titles=${word.join("")}&prop=revisions&rvprop=content&format=json&origin=*`)
@@ -103,13 +87,15 @@ function App() {
 
   }
 
-  const checkWord = async () => {
+  const checkWord = useCallback(async () => {
     let isWord = await getWiktionary();
     if (!isWord) {
       alert('Nije u popisu riječi.');
       return;
     }
     let newColors = colors;
+    let newCorrect = new Set<string>();
+    let newIncorrect = new Set(word);
     if (word.join('') === wordOfTheDay.join('')) {
       console.log('Pobijedili ste');
       alert('Bravo');
@@ -119,20 +105,25 @@ function App() {
 
       let target = wordOfTheDay;
 
+
+
       newColors = [GREY, GREY, GREY, GREY, GREY];
       for (let i = 0; i < word.length; i++) {
         if (word[i] === target[i]) {
           newColors[i] = GREEN;
           target[i] = '_';
+          newCorrect.add(word[i]);
+          newIncorrect.delete(word[i]);
         }
 
       }
       for (let i = 0; i < word.length; i++) {
         if (target.includes(word[i])) {
           newColors[i] = YELLOW;
+          newCorrect.add(word[i]);
+          newIncorrect.delete(word[i]);
         }
       }
-
 
 
     }
@@ -140,11 +131,34 @@ function App() {
       alert('Ostali ste bez pokušaja, rijec je bila: ' + wordOfTheDay.join(''));
       return;
     }
+    setCorrect(Array.from(new Set([...Array.from(newCorrect), ...correct])));
+    setIncorrect(Array.from(new Set([...Array.from(newIncorrect), ...incorrect])));
     setPreviousWords([...previousWords, { word: word, colors: newColors }]);
     setColors(['white', 'white', 'white', 'white', 'white']);
     setWord([]);
 
-  }
+  }, [word, colors, previousWords, correct, incorrect, getWiktionary]); // eslint-disable-line
+
+  const acceptLetter = useCallback((key: string) => {
+    if (key === 'Backspace') {
+      setWord(word.slice(0, -1));
+    }
+    if (key === 'Enter') {
+      word.length === 5 && checkWord();
+    }
+    else if (isAlpha(key)) {
+      if (word.length < 5) {
+        setWord([...word, key]);
+      }
+    }
+  }, [word, checkWord]);
+
+
+
+  const getKeyFromPhisycalKeyboard = useCallback(
+    (e: KeyboardEvent) => {
+      acceptLetter(e.key);
+    }, [acceptLetter])
 
   useEffect(() => {
     document.addEventListener('keydown', getKeyFromPhisycalKeyboard);
@@ -152,19 +166,35 @@ function App() {
       document.removeEventListener('keydown', getKeyFromPhisycalKeyboard);
     }
 
-  }, [word])
+  }, [word, getKeyFromPhisycalKeyboard])
 
   return (
     <div className="App" style={styles.app}>
       <h1>Rijecle</h1>
-      {previousWords.map((guess, index) => (
-        <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
-      ))}
-      <Guesses word={word} colors={colors} />
+      <div
+        style={{
+          height: '40vh',
+          overflowY: 'scroll',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column' as 'column',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+        }}
+      >
+        {previousWords.map((guess, index) => (
+          <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
+        ))}
+        <Guesses word={word} colors={colors} />
+        <Guesses word={word} colors={colors} />
+        <Guesses word={word} colors={colors} />
+        <Guesses word={word} colors={colors} />
+        <Guesses word={word} colors={colors} />
+      </div>
       <div
         style={styles.keyboardContainer}
       >
-        <Keyboard correct={[]} incorrect={[]} sendKeyPress={(key) => acceptLetter(key)} />
+        <Keyboard correct={correct} incorrect={incorrect} sendKeyPress={(key) => acceptLetter(key)} />
       </div>
     </div >
   );
