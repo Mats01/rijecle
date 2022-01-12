@@ -46,6 +46,31 @@ const styles = {
     alighItems: 'center',
 
   },
+  guessesWrapper: {
+    height: '380px',
+    maxHeight: '50vh',
+    overflowY: 'scroll' as 'scroll',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column' as 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+  },
+}
+
+function stringToHash(string: string): number {
+
+  var hash = 0;
+
+  if (string.length == 0) return hash;
+
+  for (let i = 0; i < string.length; i++) {
+    let char = string.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+
+  return hash;
 }
 
 function App() {
@@ -53,7 +78,10 @@ function App() {
   // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
   const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
   useEffect(() => {
-    let w = sveHvrImenice[Math.floor(Math.random() * sveHvrImenice.length)];
+    let yourDate = new Date()
+    const todaysIndex = stringToHash(yourDate.toISOString().split('T')[0])
+
+    let w = sveHvrImenice[todaysIndex % sveHvrImenice.length];
     setWordOfTheDay(w.split(''));
   }, []);
 
@@ -135,7 +163,7 @@ function App() {
 
 
     }
-    if (previousWords.length > 5) {
+    if (previousWords.length >= 5) {
       alert('Ostali ste bez pokušaja, rijec je bila: ' + wordOfTheDay.join(''));
       return;
     }
@@ -180,15 +208,7 @@ function App() {
     <div className="App" style={styles.app}>
       <h1>Rijecle</h1>
       <div
-        style={{
-          height: '40vh',
-          overflowY: 'scroll',
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column' as 'column',
-          justifyContent: 'flex-start',
-          alignItems: 'flex-start',
-        }}
+        style={styles.guessesWrapper}
       >
         {previousWords.map((guess, index) => (
           <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
