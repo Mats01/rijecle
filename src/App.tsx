@@ -56,6 +56,25 @@ const styles = {
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
+  bravoPopup: {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: 'white',
+    borderRadius: '5px',
+    padding: '10px',
+    boxShadow: '1px 1px 2px 2px rgba(55,55,55,0.1)',
+    display: 'flex',
+    flexDirection: 'column' as 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '80vw',
+    height: '60vh',
+    maxWidth: '600px',
+    maxHeight: '600px',
+    zIndex: 100,
+  },
 }
 
 function stringToHash(string: string): number {
@@ -90,6 +109,7 @@ function App() {
   const [previousWords, setPreviousWords] = useState<{ word: string[], colors: string[] }[]>([]);
   const [correct, setCorrect] = useState<string[]>([]);
   const [incorrect, setIncorrect] = useState<string[]>([]);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
 
   // useEffect(() => {
   //   if (previousWords.length > 5) {
@@ -134,7 +154,7 @@ function App() {
     let newIncorrect = new Set(word);
     if (word.join('') === wordOfTheDay.join('')) {
       console.log('Pobijedili ste');
-      alert('Bravo');
+      setShowPopup(true);
       setColors([GREEN, GREEN, GREEN, GREEN, GREEN]);
       return;
     } else {
@@ -207,6 +227,9 @@ function App() {
 
   return (
     <div className="App" style={styles.app}>
+      {showPopup &&
+        <BravoPopup wordOfTheDay={wordOfTheDay.join("")} guesses={previousWords.map(p => p.word.join(""))} />
+      }
       <h1>Rijecle</h1>
       <div
         style={styles.guessesWrapper}
@@ -274,6 +297,24 @@ const Guesses: FC<{ word: string[], colors: string[] }> = ({ word, colors }) => 
       >
         {word[4]}
       </div>
+    </div>
+  )
+}
+
+
+
+const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[] }> = ({ wordOfTheDay, guesses }) => {
+
+
+  return (
+    <div
+      style={styles.bravoPopup}
+    >
+      <h1>Bravo!</h1>
+      <h3>Rijec dana:</h3>
+      <h1>{wordOfTheDay}</h1>
+      <h3>Pokusaji: <strong>{guesses.length + 1}/6</strong></h3>
+
     </div>
   )
 }
