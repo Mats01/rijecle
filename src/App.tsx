@@ -156,6 +156,7 @@ function App() {
       for (let i = 0; i < word.length; i++) {
         if (target.includes(word[i])) {
           newColors[i] = YELLOW;
+          target[i] = '_';
           newCorrect.add(word[i]);
           newIncorrect.delete(word[i]);
         }
