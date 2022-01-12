@@ -2,6 +2,7 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import './App.css';
 import Keyboard from './Keyboard';
 import { sveHrvRijeci } from './sveHrvRijeci';
+import { sveHvrImenice } from './sveHvrImenice';
 
 const isAlpha = (ch: string): boolean => {
   if (ch === 'lj') return true;
@@ -52,7 +53,7 @@ function App() {
   // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
   const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
   useEffect(() => {
-    let w = sveHrvRijeci[Math.floor(Math.random() * sveHrvRijeci.length)];
+    let w = sveHvrImenice[Math.floor(Math.random() * sveHvrImenice.length)];
     setWordOfTheDay(w.split(''));
   }, []);
 
