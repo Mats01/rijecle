@@ -169,7 +169,7 @@ function App() {
       todaysIndex = stringToHash(yourDate.toISOString().split('T')[0])
     }
     let w = sveHvrImenice[todaysIndex % sveHvrImenice.length];
-    setWordOfTheDay(splitCroatianWord(w));
+    setWordOfTheDay(splitCroatianWord(w.toLowerCase()));
   }, [randomMode]);
 
   // useEffect(() => {
@@ -200,7 +200,7 @@ function App() {
     //     console.log(error);
     //     return false;
     //   })
-    return sveHrvRijeci.includes(word.join(""))
+    return sveHrvRijeci.map(r => r.toLowerCase()).includes(word.join(""))
 
   }, [word]);
 
