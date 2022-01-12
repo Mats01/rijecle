@@ -75,6 +75,16 @@ const styles = {
     maxHeight: '600px',
     zIndex: 100,
   },
+  betaBanner: {
+    position: 'absolute' as 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: 'white',
+    fotnSize: 50,
+    padding: '5px',
+    fontWeight: 'bold',
+    color: 'red',
+  }
 }
 
 function stringToHash(string: string): number {
@@ -176,7 +186,7 @@ function App() {
       for (let i = 0; i < word.length; i++) {
         if (target.includes(word[i])) {
           newColors[i] = YELLOW;
-          target[i] = '_';
+          target[target.indexOf(word[i])] = '_';
           newCorrect.add(word[i]);
           newIncorrect.delete(word[i]);
         }
@@ -227,6 +237,9 @@ function App() {
 
   return (
     <div className="App" style={styles.app}>
+      <div
+        style={styles.betaBanner}
+      >BETA</div>
       {showPopup &&
         <BravoPopup wordOfTheDay={wordOfTheDay.join("")} guesses={previousWords.map(p => p.word.join(""))} />
       }
