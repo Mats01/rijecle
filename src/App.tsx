@@ -77,14 +77,37 @@ const styles = {
   },
   betaBanner: {
     position: 'absolute' as 'absolute',
-    top: 0,
-    right: 0,
-    backgroundColor: 'white',
+    top: -55,
+    right: -65,
     fotnSize: 50,
-    padding: '5px',
     fontWeight: 'bold',
     color: 'red',
-  }
+    width: "0",
+    height: "0",
+    borderLeft: "100px solid transparent",
+    borderRight: "100px solid transparent",
+    borderBottom: "100px solid rgba(245, 39, 78, 0.4)",
+    transform: 'rotate(45deg)',
+
+  },
+  betaText: {
+    position: 'absolute' as 'absolute',
+    top: 18,
+    right: 8,
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: 'red',
+    transform: 'rotate(45deg)',
+  },
+  randomSwitch: {
+    position: 'absolute' as 'absolute',
+    top: 0,
+    left: 0,
+    backgroundColor: 'white',
+    fotnSize: 20,
+    padding: '5px',
+    cursor: 'pointer',
+  },
 }
 
 function stringToHash(string: string): number {
@@ -102,17 +125,31 @@ function stringToHash(string: string): number {
   return hash;
 }
 
+
+const splitCroatianWord = (word: string): string[] => {
+  let englSplit = word.split('');
+  let croSplit = [];
+  let i = 0;
+  while (i < englSplit.length) {
+    if (englSplit[i] === 'l' && englSplit[i + 1] === 'j') {
+      croSplit.push('lj');
+      i += 2;
+      continue;
+    }
+    if (englSplit[i] === 'n' && englSplit[i + 1] === 'j') {
+      croSplit.push('nj');
+      i += 2;
+      continue;
+    }
+    croSplit.push(englSplit[i]);
+    i++;
+  }
+  return croSplit;
+}
+
 function App() {
 
-  // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
-  const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
-  useEffect(() => {
-    let yourDate = new Date()
-    const todaysIndex = stringToHash(yourDate.toISOString().split('T')[0])
 
-    let w = sveHvrImenice[todaysIndex % sveHvrImenice.length];
-    setWordOfTheDay(w.split(''));
-  }, []);
 
   const [word, setWord] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>(['white', 'white', 'white', 'white', 'white']);
@@ -120,6 +157,20 @@ function App() {
   const [correct, setCorrect] = useState<string[]>([]);
   const [incorrect, setIncorrect] = useState<string[]>([]);
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [randomMode, setRandomMode] = useState<boolean>(false);
+  // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
+  const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
+  useEffect(() => {
+    let todaysIndex = 0;
+    if (randomMode) {
+      todaysIndex = Math.floor(Math.random() * sveHvrImenice.length);
+    } else {
+      let yourDate = new Date()
+      todaysIndex = stringToHash(yourDate.toISOString().split('T')[0])
+    }
+    let w = sveHvrImenice[todaysIndex % sveHvrImenice.length];
+    setWordOfTheDay(splitCroatianWord(w));
+  }, [randomMode]);
 
   // useEffect(() => {
   //   if (previousWords.length > 5) {
@@ -239,7 +290,22 @@ function App() {
     <div className="App" style={styles.app}>
       <div
         style={styles.betaBanner}
+      ></div>
+      <div
+        style={styles.betaText}
       >BETA</div>
+      <div
+        style={styles.randomSwitch}
+        onClick={() => setRandomMode(!randomMode)}
+      >
+        <span
+          style={!randomMode ? { textDecoration: 'underline' } : { color: "#666" }}
+        >ranked
+        </span> | <span
+          style={randomMode ? { textDecoration: 'underline' } : { color: "#666" }}
+        >random
+        </span>
+      </div>
       {showPopup &&
         <BravoPopup wordOfTheDay={wordOfTheDay.join("")} guesses={previousWords.map(p => p.word.join(""))} />
       }
