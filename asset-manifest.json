@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/rijecle/static/css/main.cb5d734a.css",
-    "main.js": "/rijecle/static/js/main.d060291b.js",
+    "main.js": "/rijecle/static/js/main.936ef992.js",
     "static/js/787.b8079e8e.chunk.js": "/rijecle/static/js/787.b8079e8e.chunk.js",
     "index.html": "/rijecle/index.html",
     "main.cb5d734a.css.map": "/rijecle/static/css/main.cb5d734a.css.map",
-    "main.d060291b.js.map": "/rijecle/static/js/main.d060291b.js.map",
+    "main.936ef992.js.map": "/rijecle/static/js/main.936ef992.js.map",
     "787.b8079e8e.chunk.js.map": "/rijecle/static/js/787.b8079e8e.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.cb5d734a.css",
-    "static/js/main.d060291b.js"
+    "static/js/main.936ef992.js"
   ]
 }
