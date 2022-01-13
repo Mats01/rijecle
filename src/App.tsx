@@ -222,11 +222,12 @@ function App() {
 
       let target = [...wordOfTheDay];
 
-
+      const guessed = []
 
       newColors = [GREY, GREY, GREY, GREY, GREY];
       for (let i = 0; i < word.length; i++) {
         if (word[i] === target[i]) {
+          guessed.push(word[i]);
           newColors[i] = GREEN;
           target[i] = '_';
           newCorrect.add(word[i]);
@@ -235,6 +236,7 @@ function App() {
 
       }
       for (let i = 0; i < word.length; i++) {
+        if (i in guessed) continue;
         if (target.includes(word[i])) {
           newColors[i] = YELLOW;
           target[target.indexOf(word[i])] = '_';
