@@ -1,4 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
+import { SHA256 } from 'crypto-js';
+
 import './App.css';
 import Keyboard from './Keyboard';
 import { styles } from './Style';
@@ -14,23 +16,6 @@ const isAlpha = (ch: string): boolean => {
 export const GREEN = '#6ff573';
 export const YELLOW = '#f8f86c';
 export const GREY = '#aaa';
-
-
-
-function stringToHash(string: string): number {
-
-  let hash = 0;
-
-  if (string.length === 0) return hash;
-
-  for (let i = 0; i < string.length; i++) {
-    let char = string.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-
-  return hash;
-}
 
 
 const splitCroatianWord = (word: string): string[] => {
@@ -74,7 +59,7 @@ function App() {
       todaysIndex = Math.floor(Math.random() * sveHvrImenice.length);
     } else {
       let yourDate = new Date()
-      todaysIndex = stringToHash(yourDate.toISOString().split('T')[0])
+      todaysIndex = SHA256(yourDate.toISOString().split('T')[0]).words.reduce((a: number, b: number) => Math.abs(a) + b)
     }
     let w = sveHvrImenice[todaysIndex % sveHvrImenice.length];
     setWordOfTheDay(splitCroatianWord(w.toLowerCase()));
