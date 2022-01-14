@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import './App.css';
 import Keyboard from './Keyboard';
+import { styles } from './Style';
 import { sveHrvRijeci } from './sveHrvRijeci';
 import { sveHvrImenice } from './sveHvrImenice';
 
@@ -14,101 +15,7 @@ export const GREEN = '#6ff573';
 export const YELLOW = '#f8f86c';
 export const GREY = '#aaa';
 
-const styles = {
-  app: {
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  container: {
-    border: '1px solid rgb(155,155,155)',
-    width: 40,
-    height: 50,
-    margin: 5,
-    fontSize: 30,
-    display: 'flex',
-    textAlign: 'center' as 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-    boxShadow: '1px 1px 2px 2px rgba(55,55,55,0.1)',
-  },
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'row' as 'row',
-    margin: '0 auto',
-  },
-  keyboardContainer: {
-    position: 'absolute' as 'absolute',
-    bottom: 20,
-    width: '100%',
-    display: 'flex',
-    alighItems: 'center',
 
-  },
-  guessesWrapper: {
-    height: '380px',
-    maxHeight: '50vh',
-    overflowY: 'scroll' as 'scroll',
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-  },
-  bravoPopup: {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    backgroundColor: 'white',
-    borderRadius: '5px',
-    padding: '10px',
-    boxShadow: '1px 1px 2px 2px rgba(55,55,55,0.1)',
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '80vw',
-    height: '60vh',
-    maxWidth: '600px',
-    maxHeight: '600px',
-    zIndex: 100,
-  },
-  betaBanner: {
-    position: 'absolute' as 'absolute',
-    top: -55,
-    right: -65,
-    fotnSize: 50,
-    fontWeight: 'bold',
-    color: 'red',
-    width: "0",
-    height: "0",
-    borderLeft: "100px solid transparent",
-    borderRight: "100px solid transparent",
-    borderBottom: "100px solid rgba(245, 39, 78, 0.4)",
-    transform: 'rotate(45deg)',
-
-  },
-  betaText: {
-    position: 'absolute' as 'absolute',
-    top: 18,
-    right: 8,
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: 'red',
-    transform: 'rotate(45deg)',
-  },
-  randomSwitch: {
-    position: 'absolute' as 'absolute',
-    top: 0,
-    left: 0,
-    backgroundColor: 'white',
-    fotnSize: 20,
-    padding: '5px',
-    cursor: 'pointer',
-  },
-}
 
 function stringToHash(string: string): number {
 
@@ -227,7 +134,7 @@ function App() {
       newColors = [GREY, GREY, GREY, GREY, GREY];
       for (let i = 0; i < word.length; i++) {
         if (word[i] === target[i]) {
-          guessed.push(word[i]);
+          guessed.push(i);
           newColors[i] = GREEN;
           target[i] = '_';
           newCorrect.add(word[i]);
@@ -236,7 +143,7 @@ function App() {
 
       }
       for (let i = 0; i < word.length; i++) {
-        if (i in guessed) continue;
+        if (guessed.indexOf(i) !== -1) continue;
         if (target.includes(word[i])) {
           newColors[i] = YELLOW;
           target[target.indexOf(word[i])] = '_';
