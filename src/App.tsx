@@ -64,7 +64,7 @@ function App() {
   const [correct, setCorrect] = useState<string[]>([]);
   const [incorrect, setIncorrect] = useState<string[]>([]);
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [randomMode, setRandomMode] = useState<boolean>(false);
+  const [randomMode,] = useState<boolean>(window.localStorage.getItem('@random') === 'true' || false);
   // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
   const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
   useEffect(() => {
@@ -195,6 +195,14 @@ function App() {
 
   }, [word, getKeyFromPhisycalKeyboard])
 
+  const toggleRandomMode = () => {
+    if (previousWords.length > 0) {
+      if (!window.confirm('Da li želite krenuti ispočetka?')) return;
+    }
+    window.localStorage.setItem('@random', !randomMode ? 'true' : 'false');
+    window.location.reload();
+  }
+
   return (
     <div className="App" style={styles.app}>
       <div
@@ -205,7 +213,7 @@ function App() {
       >BETA</div>
       <div
         style={styles.randomSwitch}
-        onClick={() => setRandomMode(!randomMode)}
+        onClick={toggleRandomMode}
       >
         <span
           style={!randomMode ? { textDecoration: 'underline' } : { color: "#666" }}
