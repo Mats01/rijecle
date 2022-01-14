@@ -1,9 +1,11 @@
 export const styles = {
   app: {
-    display: 'flex',
-    flexDirection: 'column' as 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // display: 'flex',
+    // flexDirection: 'column' as 'column',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    width: '100vw',
+    height: '100vh',
   },
   container: {
     border: '1px solid rgb(155,155,155)',
@@ -91,5 +93,32 @@ export const styles = {
     fotnSize: 20,
     padding: '5px',
     cursor: 'pointer',
+  },
+  explanerWindow: {
+    boxSizing: 'border-box' as 'border-box',
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: 'white',
+    position: 'absolute' as 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 100,
+    display: 'flex',
+    flexDirection: 'column' as 'column',
+    paddingTop: '40px',
+    alignItems: 'center',
+  },
+  greebButton: {
+    backgroundColor: '#6ff573',
+    borderRadius: '5px',
+    padding: '5px',
+    margin: '5px',
+    cursor: 'pointer',
+    width: '100px',
+    height: '50px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+
   },
 }

@@ -65,6 +65,7 @@ function App() {
   const [incorrect, setIncorrect] = useState<string[]>([]);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [randomMode,] = useState<boolean>(window.localStorage.getItem('@random') === 'true' || false);
+  const [hideExplainer, setHideExplainer] = useState<boolean>(window.localStorage.getItem('@hideExplainer') === '4' || false);
   // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
   const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
   useEffect(() => {
@@ -203,6 +204,16 @@ function App() {
     window.location.reload();
   }
 
+  const dismissExplainer = () => {
+    if (!parseInt(window.localStorage.getItem('@hideExplainer') || '0')) {
+      window.localStorage.setItem('@hideExplainer', '1');
+    } else {
+      let nrOfShowings = parseInt(window.localStorage.getItem('@hideExplainer') || '0');
+      window.localStorage.setItem('@hideExplainer', `${nrOfShowings + 1}`);
+    }
+    setHideExplainer(true);
+  }
+
   return (
     <div className="App" style={styles.app}>
       <div
@@ -240,6 +251,7 @@ function App() {
       >
         <Keyboard correct={correct} incorrect={incorrect} sendKeyPress={(key) => acceptLetter(key)} />
       </div>
+      {!hideExplainer && <Explainer hide={dismissExplainer} />}
     </div >
   );
 }
@@ -313,4 +325,26 @@ const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[] }> = ({ wordOfThe
 
     </div>
   )
+}
+
+
+const Explainer: FC<{ hide: () => void }> = ({ hide }) => {
+
+  return (<>
+    <div style={styles.explanerWindow}>
+      <h1>Rijecle</h1>
+      <p>Pogodi novu riječ svaki dan u 6 pokušaja.</p>
+      <p>Svaki pokušaj mora biti hrvatska riječ.</p>
+      <p>Nakon svakog pokušaja otkriva se koja slova su pogođena.</p>
+      <h3>Primjeri:</h3>
+
+      <Guesses word={['o', 'k', 'o', 'l', 'o']} colors={[GREY, YELLOW, GREY, GREY, GREY]} />
+      <p>Tražena riječ sadrži slovo 'k' na nakom drugom mjestu.</p>
+
+      <Guesses word={['r', 'u', 'k', 'a', 'v']} colors={[GREEN, GREY, GREY, GREY, GREY]} />
+      <p>Tražena riječ sadrži slovo 'r' na prvom mjestu.</p>
+
+      <button style={styles.greebButton} onClick={hide}>Kreni</button>
+    </div>
+  </>)
 }
