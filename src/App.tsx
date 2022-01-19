@@ -59,7 +59,7 @@ function App() {
       todaysIndex = Math.floor(Math.random() * sveHvrImenice.length);
     } else {
       let yourDate = new Date()
-      todaysIndex = SHA256(yourDate.toISOString().split('T')[0]).words.reduce((a: number, b: number) => Math.abs(a) + b)
+      todaysIndex = SHA256(yourDate.toISOString().split('T')[0]).words.reduce((a: number, b: number) => Math.abs(Math.abs(a) + b))
     }
     let w = sveHvrImenice[todaysIndex % sveHvrImenice.length];
     setWordOfTheDay(splitCroatianWord(w.toLowerCase()));
