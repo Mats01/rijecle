@@ -201,9 +201,9 @@ function App() {
 
   return (
     <div className="App" style={styles.app}>
-      <div
+      {/* <div
         style={styles.betaBanner}
-      ></div>
+      ></div> */}
       <div
         style={styles.betaText}
       >BETA</div>
@@ -230,6 +230,8 @@ function App() {
           <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
         ))}
         <Guesses word={word} colors={colors} />
+
+        {Array(5 - previousWords.length).fill(0).map((_, index) => (<Guesses word={["", "", "", "", ""]} colors={['white', 'white', 'white', 'white', 'white']} />))}
       </div>
       <div
         style={styles.keyboardContainer}

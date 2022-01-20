@@ -9,8 +9,10 @@ export const styles = {
   },
   container: {
     border: '1px solid rgb(155,155,155)',
-    width: 40,
-    height: 50,
+    width: 'calc((100vh - 460px - 2rem)/6) ',
+    height: 'calc((100vh - 460px - 2rem)/6) ',
+    // maxHeight: 60,
+    // maxWidth: 60,
     margin: 5,
     fontSize: 30,
     display: 'flex',
@@ -26,15 +28,14 @@ export const styles = {
   },
   keyboardContainer: {
     position: 'absolute' as 'absolute',
-    bottom: 20,
+    bottom: 0,
     width: '100%',
     display: 'flex',
     alighItems: 'center',
 
   },
   guessesWrapper: {
-    height: '380px',
-    maxHeight: '50vh',
+    height: 'auto',
     overflowY: 'scroll' as 'scroll',
     width: '100%',
     display: 'flex',
