@@ -51,6 +51,7 @@ function App() {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [randomMode,] = useState<boolean>(window.localStorage.getItem('@random') === 'true' || false);
   const [hideExplainer, setHideExplainer] = useState<boolean>(window.localStorage.getItem('@hideExplainer') === '4' || false);
+  const [emojiText, setEmojiText] = useState<string>('');
   // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
   const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
   useEffect(() => {
@@ -62,6 +63,7 @@ function App() {
       todaysIndex = SHA256(yourDate.toISOString().split('T')[0]).words.reduce((a: number, b: number) => Math.abs(Math.abs(a) + b))
     }
     let w = sveHvrImenice[todaysIndex % sveHvrImenice.length];
+    console.log(w);
     setWordOfTheDay(splitCroatianWord(w.toLowerCase()));
   }, [randomMode]);
 
@@ -97,6 +99,30 @@ function App() {
 
   }, [word]);
 
+  const getEmoji = useCallback((): string => {
+    <h3>Pokusaji: <strong></strong></h3>
+    let emoji = `Rjecle 🇭🇷 ${previousWords.length + 1}/6`;
+
+    for (const guess of previousWords) {
+      let line = '';
+      for (const letter of guess.colors) {
+        switch (letter) {
+          case GREEN:
+            line += '🟩';
+            break;
+          case YELLOW:
+            line += '🟨';
+            break;
+          default:
+            line += '⬜️';
+        }
+      }
+      emoji += `\n${line}`;
+    }
+    emoji += `\n🟩🟩🟩🟩🟩`;
+    return emoji;
+  }, [previousWords])
+
   const checkWord = () => {
     let isWord = getWiktionary();
     if (!isWord) {
@@ -108,6 +134,7 @@ function App() {
     let newIncorrect = new Set(word);
     if (word.join('') === wordOfTheDay.join('')) {
       console.log('Pobijedili ste');
+      setEmojiText(getEmoji());
       setShowPopup(true);
       setColors([GREEN, GREEN, GREEN, GREEN, GREEN]);
       return;
@@ -220,7 +247,11 @@ function App() {
         </span>
       </div>
       {showPopup &&
-        <BravoPopup wordOfTheDay={wordOfTheDay.join("")} guesses={previousWords.map(p => p.word.join(""))} />
+        <BravoPopup
+          wordOfTheDay={wordOfTheDay.join("")}
+          guesses={previousWords.map(p => p.word.join(""))}
+          emoji={emojiText}
+        />
       }
       <div
         style={{ ...styles.appContainer, maxHeight: window.innerHeight }}
@@ -302,7 +333,7 @@ const Guesses: FC<{ word: string[], colors: string[] }> = ({ word, colors }) => 
 
 
 
-const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[] }> = ({ wordOfTheDay, guesses }) => {
+const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[], emoji: string }> = ({ wordOfTheDay, guesses, emoji }) => {
 
 
   return (
@@ -310,14 +341,20 @@ const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[] }> = ({ wordOfThe
       style={styles.bravoPopup}
     >
       <h1>Bravo!</h1>
-      <h3>Rijec dana:</h3>
-      <h1>{wordOfTheDay}</h1>
       <h3>Pokusaji: <strong>{guesses.length + 1}/6</strong></h3>
+      <h1>{wordOfTheDay}</h1>
+      <pre>{emoji}</pre>
+      <button
+        style={styles.greebButton}
+        onClick={() => {
+          // set clipboard content to emoji
+          navigator.clipboard.writeText(emoji);
+        }}
+      >Podijeli</button>
 
     </div>
   )
 }
-
 
 const Explainer: FC<{ hide: () => void }> = ({ hide }) => {
 
