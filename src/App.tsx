@@ -222,21 +222,25 @@ function App() {
       {showPopup &&
         <BravoPopup wordOfTheDay={wordOfTheDay.join("")} guesses={previousWords.map(p => p.word.join(""))} />
       }
-      <h1>Rijecle</h1>
       <div
-        style={styles.guessesWrapper}
+        style={{ ...styles.appContainer, maxHeight: window.innerHeight }}
       >
-        {previousWords.map((guess, index) => (
-          <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
-        ))}
-        <Guesses word={word} colors={colors} />
+        <h1>Rijecle</h1>
+        <div
+          style={styles.guessesWrapper}
+        >
+          {previousWords.map((guess, index) => (
+            <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
+          ))}
+          <Guesses word={word} colors={colors} />
 
-        {Array(5 - previousWords.length).fill(0).map((_, index) => (<Guesses word={["", "", "", "", ""]} colors={['white', 'white', 'white', 'white', 'white']} />))}
-      </div>
-      <div
-        style={styles.keyboardContainer}
-      >
-        <Keyboard correct={correct} incorrect={incorrect} sendKeyPress={(key) => acceptLetter(key)} />
+          {Array(5 - previousWords.length).fill(0).map((_, index) => (<Guesses word={["", "", "", "", ""]} colors={['white', 'white', 'white', 'white', 'white']} />))}
+        </div>
+        <div
+          style={styles.keyboardContainer}
+        >
+          <Keyboard correct={correct} incorrect={incorrect} sendKeyPress={(key) => acceptLetter(key)} />
+        </div>
       </div>
       {!hideExplainer && <Explainer hide={dismissExplainer} />}
     </div >
