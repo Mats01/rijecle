@@ -6,6 +6,7 @@ import Keyboard from './Keyboard';
 import { styles } from './Style';
 import { sveHrvRijeci } from './sveHrvRijeci';
 import { sveHvrImenice } from './sveHvrImenice';
+import useCorrectHeight from './correctHiehgtHook';
 
 const isAlpha = (ch: string): boolean => {
   if (ch === 'lj') return true;
@@ -41,7 +42,7 @@ const splitCroatianWord = (word: string): string[] => {
 
 function App() {
 
-
+  const correctHeightRef = useCorrectHeight<HTMLDivElement>();
 
   const [word, setWord] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>(['white', 'white', 'white', 'white', 'white']);
@@ -200,13 +201,13 @@ function App() {
   }
 
   return (
-    <div className="App" style={styles.app}>
+    <div ref={correctHeightRef} className="App" style={styles.app}>
       <div
         style={styles.betaBanner}
-      ></div>
-      <div
-        style={styles.betaText}
-      >BETA</div>
+      >
+        <div style={styles.betaText}>BETA</div>
+      </div>
+
       <div
         style={styles.randomSwitch}
         onClick={toggleRandomMode}
