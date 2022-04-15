@@ -6,6 +6,7 @@ import Keyboard from './Keyboard';
 import { styles } from './Style';
 import { sveHrvRijeci } from './sveHrvRijeci';
 import { sveHvrImenice } from './sveHvrImenice';
+import { useCorrectHeight, useScrollToBottom } from './hooks';
 
 const isAlpha = (ch: string): boolean => {
   if (ch === 'lj') return true;
@@ -41,7 +42,8 @@ const splitCroatianWord = (word: string): string[] => {
 
 function App() {
 
-
+  const correctHeightRef = useCorrectHeight<HTMLDivElement>();
+  const guessesRef = useScrollToBottom<HTMLDivElement>();
 
   const [word, setWord] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>(['white', 'white', 'white', 'white', 'white']);
@@ -200,13 +202,13 @@ function App() {
   }
 
   return (
-    <div className="App" style={styles.app}>
+    <div ref={correctHeightRef} className="App" style={styles.app}>
       <div
         style={styles.betaBanner}
-      ></div>
-      <div
-        style={styles.betaText}
-      >BETA</div>
+      >
+        <div style={styles.betaText}>BETA</div>
+      </div>
+
       <div
         style={styles.randomSwitch}
         onClick={toggleRandomMode}
@@ -222,18 +224,17 @@ function App() {
       {showPopup &&
         <BravoPopup wordOfTheDay={wordOfTheDay.join("")} guesses={previousWords.map(p => p.word.join(""))} />
       }
-      <h1>Rijecle</h1>
-      <div
-        style={styles.guessesWrapper}
-      >
-        {previousWords.map((guess, index) => (
-          <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
-        ))}
-        <Guesses word={word} colors={colors} />
-      </div>
-      <div
-        style={styles.keyboardContainer}
-      >
+      <div style={styles.mainflexWrapper}>
+        <h1>Rijecle</h1>
+        <div
+          ref={guessesRef}
+          style={styles.guessesWrapper}
+        >
+          {previousWords.map((guess, index) => (
+            <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
+          ))}
+          <Guesses word={word} colors={colors} />
+        </div>
         <Keyboard correct={correct} incorrect={incorrect} sendKeyPress={(key) => acceptLetter(key)} />
       </div>
       {!hideExplainer && <Explainer hide={dismissExplainer} />}
