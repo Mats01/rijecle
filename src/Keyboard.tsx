@@ -45,66 +45,64 @@ const Keyboard: FC<{ correct: string[], incorrect: string[], sendKeyPress: (key:
   const thirdRow = ['z', 'x', 'c', 'v', 'b', 'n', 'm', 'lj', 'nj'];
 
   return (
-    <>
-      <div style={styles.wrapper}>
+    <div style={styles.wrapper}>
 
-        <div style={styles.row}>
-          <>
-            {firstRow.map(key => (
-              <div
-                style={{ ...styles.key, backgroundColor: correct.includes(key) ? GREEN : incorrect.includes(key) ? GREY : 'white' }}
-                key={key} className='key'
-                onClick={() => sendKeyPress(key)}
-              >
-                {key}
-              </div>
-            ))}
-          </>
-
-        </div>
-        <div style={{ ...styles.row }}>
-          <>
-            {secondRow.map(key => (
-              <div
-                style={{ ...styles.key, backgroundColor: correct.includes(key) ? GREEN : incorrect.includes(key) ? GREY : 'white' }}
-                key={key} className='key'
-                onClick={() => sendKeyPress(key)}
-              >
-                {key}
-              </div>
-            ))}
-          </>
-
-        </div>
-        <div style={styles.row}>
-          <>
-            {thirdRow.map(key => (
-              <div
-                style={{ ...styles.key, backgroundColor: correct.includes(key) ? GREEN : incorrect.includes(key) ? GREY : 'white' }}
-
-                key={key} className='key'
-                onClick={() => sendKeyPress(key)}
-              >
-                {key}
-              </div>
-            ))}
-          </>
-
-        </div>
-        <div style={{ ...styles.row }}>
-
-          <div
-            style={{ ...styles.key, minWidth: 100, flexGrow: 3 }}
-            onClick={() => sendKeyPress('Enter')}
-          >{'Provjeri'}</div>
-          <div
-            style={{ ...styles.key, minWidth: 100, flexGrow: 3 }}
-            onClick={() => sendKeyPress('Backspace')}
-          >{'Obriši'}</div>
-        </div>
+      <div style={styles.row}>
+        <>
+          {firstRow.map(key => (
+            <div
+              style={{ ...styles.key, backgroundColor: correct.includes(key) ? GREEN : incorrect.includes(key) ? GREY : 'white' }}
+              key={key} className='key'
+              onClick={() => sendKeyPress(key)}
+            >
+              {key}
+            </div>
+          ))}
+        </>
 
       </div>
-    </>
+      <div style={{ ...styles.row }}>
+        <>
+          {secondRow.map(key => (
+            <div
+              style={{ ...styles.key, backgroundColor: correct.includes(key) ? GREEN : incorrect.includes(key) ? GREY : 'white' }}
+              key={key} className='key'
+              onClick={() => sendKeyPress(key)}
+            >
+              {key}
+            </div>
+          ))}
+        </>
+
+      </div>
+      <div style={styles.row}>
+        <>
+          {thirdRow.map(key => (
+            <div
+              style={{ ...styles.key, backgroundColor: correct.includes(key) ? GREEN : incorrect.includes(key) ? GREY : 'white' }}
+
+              key={key} className='key'
+              onClick={() => sendKeyPress(key)}
+            >
+              {key}
+            </div>
+          ))}
+        </>
+
+      </div>
+      <div style={{ ...styles.row }}>
+
+        <div
+          style={{ ...styles.key, minWidth: 100, flexGrow: 3 }}
+          onClick={() => sendKeyPress('Enter')}
+        >{'Provjeri'}</div>
+        <div
+          style={{ ...styles.key, minWidth: 100, flexGrow: 3 }}
+          onClick={() => sendKeyPress('Backspace')}
+        >{'Obriši'}</div>
+      </div>
+
+    </div>
   )
 }
 export default Keyboard

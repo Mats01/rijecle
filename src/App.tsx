@@ -6,7 +6,7 @@ import Keyboard from './Keyboard';
 import { styles } from './Style';
 import { sveHrvRijeci } from './sveHrvRijeci';
 import { sveHvrImenice } from './sveHvrImenice';
-import useCorrectHeight from './correctHiehgtHook';
+import { useCorrectHeight, useScrollToBottom } from './hooks';
 
 const isAlpha = (ch: string): boolean => {
   if (ch === 'lj') return true;
@@ -43,6 +43,7 @@ const splitCroatianWord = (word: string): string[] => {
 function App() {
 
   const correctHeightRef = useCorrectHeight<HTMLDivElement>();
+  const guessesRef = useScrollToBottom<HTMLDivElement>();
 
   const [word, setWord] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>(['white', 'white', 'white', 'white', 'white']);
@@ -141,10 +142,10 @@ function App() {
 
 
     }
-    if (previousWords.length >= 5) {
-      alert('Ostali ste bez pokušaja, rijec je bila: ' + wordOfTheDay.join(''));
-      return;
-    }
+    // if (previousWords.length >= 5) {
+    //   alert('Ostali ste bez pokušaja, rijec je bila: ' + wordOfTheDay.join(''));
+    //   return;
+    // }
     setCorrect(Array.from(new Set([...Array.from(newCorrect), ...correct])));
     setIncorrect(Array.from(new Set([...Array.from(newIncorrect), ...incorrect])));
     setPreviousWords([...previousWords, { word: word, colors: newColors }]);
@@ -223,18 +224,17 @@ function App() {
       {showPopup &&
         <BravoPopup wordOfTheDay={wordOfTheDay.join("")} guesses={previousWords.map(p => p.word.join(""))} />
       }
-      <h1>Rijecle</h1>
-      <div
-        style={styles.guessesWrapper}
-      >
-        {previousWords.map((guess, index) => (
-          <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
-        ))}
-        <Guesses word={word} colors={colors} />
-      </div>
-      <div
-        style={styles.keyboardContainer}
-      >
+      <div style={styles.mainflexWrapper}>
+        <h1>Rijecle</h1>
+        <div
+          ref={guessesRef}
+          style={styles.guessesWrapper}
+        >
+          {previousWords.map((guess, index) => (
+            <Guesses word={guess.word} colors={guess.colors} key={index.toString()} />
+          ))}
+          <Guesses word={word} colors={colors} />
+        </div>
         <Keyboard correct={correct} incorrect={incorrect} sendKeyPress={(key) => acceptLetter(key)} />
       </div>
       {!hideExplainer && <Explainer hide={dismissExplainer} />}

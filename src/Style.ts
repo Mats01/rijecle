@@ -24,23 +24,21 @@ export const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     boxShadow: '1px 1px 2px 2px rgba(55,55,55,0.1)',
   },
+  mainflexWrapper: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
   wrapper: {
     display: 'flex',
     flexDirection: 'row' as 'row',
     margin: '0 auto',
   },
-  keyboardContainer: {
-    position: 'absolute',
-    bottom: 20,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-
-  },
   guessesWrapper: {
-    height: 320,
-    maxHeight: '50vh',
-    overflowY: 'scroll' as 'scroll',
+    height: '100%',
+    // maxHeight: '50vh',
+    overflowY: 'scroll',
     width: '100%',
     display: 'flex',
     flexDirection: 'column' as 'column',
