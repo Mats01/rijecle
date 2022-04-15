@@ -142,10 +142,10 @@ function App() {
 
 
     }
-    // if (previousWords.length >= 5) {
-    //   alert('Ostali ste bez pokušaja, rijec je bila: ' + wordOfTheDay.join(''));
-    //   return;
-    // }
+    if (previousWords.length >= 5) {
+      alert('Ostali ste bez pokušaja, rijec je bila: ' + wordOfTheDay.join(''));
+      return;
+    }
     setCorrect(Array.from(new Set([...Array.from(newCorrect), ...correct])));
     setIncorrect(Array.from(new Set([...Array.from(newIncorrect), ...incorrect])));
     setPreviousWords([...previousWords, { word: word, colors: newColors }]);
