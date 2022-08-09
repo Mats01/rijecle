@@ -56,6 +56,7 @@ function App() {
   const [emojiText, setEmojiText] = useState<string>('');
   // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
   const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
+  const [hasWon, setHasWon] = useState<boolean>(false);
   useEffect(() => {
     let todaysIndex = 0;
     if (randomMode) {
@@ -138,6 +139,7 @@ function App() {
       console.log('Pobijedili ste');
       setEmojiText(getEmoji());
       setShowPopup(true);
+      setHasWon(true);
       setColors([GREEN, GREEN, GREEN, GREEN, GREEN]);
       return;
     } else {
@@ -253,6 +255,7 @@ function App() {
           wordOfTheDay={wordOfTheDay.join("")}
           guesses={previousWords.map(p => p.word.join(""))}
           emoji={emojiText}
+          hide={() => setShowPopup(false)}
         />
       }
       <div style={styles.mainflexWrapper}>
@@ -268,6 +271,17 @@ function App() {
         </div>
         <Keyboard correct={correct} incorrect={incorrect} sendKeyPress={(key) => acceptLetter(key)} />
       </div>
+      {hasWon && <div
+        style={{
+          position: 'absolute',
+          left: 5,
+          top: 30,
+          textDecoration: 'underline',
+          fontSize: '1.2rem',
+          cursor: 'pointer',
+        }}
+        onClick={() => setShowPopup(true)}
+      >rezultat</div>}
       {!hideExplainer && <Explainer hide={dismissExplainer} />}
     </div >
   );
@@ -328,7 +342,7 @@ const Guesses: FC<{ word: string[], colors: string[] }> = ({ word, colors }) => 
 
 
 
-const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[], emoji: string }> = ({ wordOfTheDay, guesses, emoji }) => {
+const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[], emoji: string; hide: () => void }> = ({ wordOfTheDay, guesses, emoji, hide }) => {
 
 
   return (
@@ -346,7 +360,11 @@ const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[], emoji: string }>
           navigator.clipboard.writeText(emoji);
         }}
       >Podijeli</button>
+      <div
+        onClick={hide}
+        style={{ position: 'absolute', right: 10, top: 10, cursor: 'pointer' }}
 
+      >x</div>
     </div>
   )
 }
