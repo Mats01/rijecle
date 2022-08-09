@@ -57,6 +57,49 @@ function App() {
   // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
   const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
   const [hasWon, setHasWon] = useState<boolean>(false);
+  const [rehidrated, setRehidrated] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!rehidrated) return;
+    const state = JSON.stringify({
+      word,
+      colors,
+      previousWords,
+      correct,
+      incorrect,
+      showPopup,
+      hideExplainer,
+      emojiText,
+      hasWon,
+    });
+    // currdate
+    const date = new Date().toISOString().split('T')[0];
+
+
+    window.localStorage.setItem(date, state);
+  }, [rehidrated, word, colors, previousWords, correct, incorrect, showPopup, hideExplainer, emojiText, hasWon]);
+
+  const rehidrate = () => {
+    const date = new Date().toISOString().split('T')[0];
+
+
+    // check if localStorage has key with current date
+    if (window.localStorage.getItem(date)) {
+      const state = JSON.parse(window.localStorage.getItem(date)!);
+
+      setWord(state.word);
+      setColors(state.colors);
+      setPreviousWords(state.previousWords);
+      setCorrect(state.correct);
+      setIncorrect(state.incorrect);
+      setShowPopup(state.showPopup);
+      setHideExplainer(state.hideExplainer);
+      setEmojiText(state.emojiText);
+      setHasWon(state.hasWon);
+
+    }
+    setRehidrated(true);
+  };
   useEffect(() => {
     let todaysIndex = 0;
     if (randomMode) {
@@ -68,6 +111,7 @@ function App() {
     let w = sveHvrImenice[todaysIndex % sveHvrImenice.length];
     console.log(w);
     setWordOfTheDay(splitCroatianWord(w.toLowerCase()));
+    rehidrate();
   }, [randomMode]);
 
   // useEffect(() => {
