@@ -73,14 +73,18 @@ function App() {
       hasWon,
     });
     // currdate
-    const date = new Date().toISOString().split('T')[0];
+    const date = new Date().toLocaleString('sv-SE', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }).split(' ')[0];
+
+
 
 
     window.localStorage.setItem(date, state);
   }, [rehidrated, word, colors, previousWords, correct, incorrect, showPopup, hideExplainer, emojiText, hasWon]);
 
   const rehidrate = () => {
-    const date = new Date().toISOString().split('T')[0];
+    const date = new Date().toLocaleString('sv-SE', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }).split(' ')[0];
+    console.log('date', date);
+
 
 
     // check if localStorage has key with current date
@@ -105,8 +109,9 @@ function App() {
     if (randomMode) {
       todaysIndex = Math.floor(Math.random() * sveHvrImenice.length);
     } else {
-      let yourDate = new Date()
-      todaysIndex = SHA256(yourDate.toISOString().split('T')[0]).words.reduce((a: number, b: number) => Math.abs(Math.abs(a) + b))
+      const date = new Date().toLocaleString('sv-SE', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }).split(' ')[0];
+
+      todaysIndex = SHA256(date).words.reduce((a: number, b: number) => Math.abs(Math.abs(a) + b))
     }
     let w = sveHvrImenice[todaysIndex % sveHvrImenice.length];
     console.log(w);
