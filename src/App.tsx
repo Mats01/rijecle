@@ -52,7 +52,7 @@ function App() {
   const [incorrect, setIncorrect] = useState<string[]>([]);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [randomMode,] = useState<boolean>(window.localStorage.getItem('@random') === 'true' || false);
-  const [hideExplainer, setHideExplainer] = useState<boolean>(window.localStorage.getItem('@hideExplainer') === '4' || false);
+  const [hideExplainer, setHideExplainer] = useState<boolean>(window.innerHeight < 600 ? true : (window.localStorage.getItem('@hideExplainer') === '4' || false));
   const [emojiText, setEmojiText] = useState<string>('');
   // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
   const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
@@ -78,10 +78,11 @@ function App() {
 
 
 
-    window.localStorage.setItem(date, state);
-  }, [rehidrated, word, colors, previousWords, correct, incorrect, showPopup, hideExplainer, emojiText, hasWon]);
+    !randomMode && window.localStorage.setItem(date, state);
+  }, [rehidrated, word, colors, previousWords, correct, incorrect, showPopup, hideExplainer, emojiText, hasWon, randomMode]);
 
   const rehidrate = () => {
+    if (randomMode) return;
     const date = new Date().toLocaleString('sv-SE', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }).split(' ')[0];
     console.log('date', date);
 
@@ -97,7 +98,7 @@ function App() {
       setCorrect(state.correct);
       setIncorrect(state.incorrect);
       setShowPopup(state.showPopup);
-      setHideExplainer(state.hideExplainer);
+      setHideExplainer(window.innerHeight < 600 ? true : state.hideExplainer);
       setEmojiText(state.emojiText);
       setHasWon(state.hasWon);
 
