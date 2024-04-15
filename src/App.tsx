@@ -242,7 +242,16 @@ function App() {
     }
     else if (isAlpha(key)) {
       if (word.length < 5) {
-        setWord([...word, key]);
+        // if the last letter was l and the new letter is j add lj
+        if (word.length > 0 && word[word.length - 1] === 'l' && key === 'j') {
+          setWord([...word.slice(0, -1), 'lj']);
+        } else if (word.length > 0 && word[word.length - 1] === 'n' && key === 'j') {
+          setWord([...word.slice(0, -1), 'nj']);
+        } else if (word.length > 0 && word[word.length - 1] === 'd' && key === 'ž') {
+          setWord([...word.slice(0, -1), 'dž']);
+        } else {
+          setWord([...word, key]);
+        }
       }
     }
   }, [word]); // eslint-disable-line
