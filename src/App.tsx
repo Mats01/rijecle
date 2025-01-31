@@ -430,8 +430,7 @@ const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[], emoji: string; h
           if (navigator.share) {
             try {
               await navigator.share({
-                title: "Check this out!",
-                text: "I found something interesting.",
+                title: emoji,
                 url: window.location.href,
               });
               console.log("Shared successfully");
