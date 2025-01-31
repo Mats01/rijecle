@@ -57,6 +57,7 @@ function App() {
   // const wordOfTheDay = ['š', 'k', 'o', 'l', 'a'];
   const [wordOfTheDay, setWordOfTheDay] = useState<string[]>([]);
   const [hasWon, setHasWon] = useState<boolean>(false);
+  const [gameOver, setGameOver] = useState<boolean>(false);
   const [rehidrated, setRehidrated] = useState<boolean>(false);
 
   useEffect(() => {
@@ -71,6 +72,7 @@ function App() {
       hideExplainer,
       emojiText,
       hasWon,
+      gameOver,
     });
     // currdate
     const date = new Date().toLocaleString('sv-SE', { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }).split(' ')[0];
@@ -79,7 +81,7 @@ function App() {
 
 
     !randomMode && window.localStorage.setItem(date, state);
-  }, [rehidrated, word, colors, previousWords, correct, incorrect, showPopup, hideExplainer, emojiText, hasWon, randomMode]);
+  }, [rehidrated, word, colors, previousWords, correct, incorrect, showPopup, hideExplainer, emojiText, hasWon, randomMode, gameOver]);
 
   const rehidrate = () => {
     if (randomMode) return;
@@ -97,11 +99,11 @@ function App() {
       setPreviousWords(state.previousWords);
       setCorrect(state.correct);
       setIncorrect(state.incorrect);
-      setShowPopup(state.showPopup);
+      setShowPopup(state.gameOver ? true : state.showPopup);
       setHideExplainer(window.innerHeight < 600 ? true : state.hideExplainer);
       setEmojiText(state.emojiText);
       setHasWon(state.hasWon);
-
+      setGameOver(state.gameOver);
     }
     setRehidrated(true);
   };
@@ -152,11 +154,12 @@ function App() {
 
   }, [word]);
 
-  const getEmoji = useCallback((): string => {
-    <h3>Pokusaji: <strong></strong></h3>
-    let emoji = `Rjecle 🇭🇷 ${previousWords.length + 1}/6`;
+  const getEmoji = useCallback((newPreviousWords: { word: string[], colors: string[] }[], hasWon: boolean): string => {
 
-    for (const guess of previousWords) {
+    <h3>Pokusaji: <strong></strong></h3>
+    let emoji = `Rjecle 🇭🇷 ${hasWon ? newPreviousWords.length : "X"}/6`;
+
+    for (const guess of newPreviousWords) {
       let line = '';
       for (const letter of guess.colors) {
         switch (letter) {
@@ -172,9 +175,8 @@ function App() {
       }
       emoji += `\n${line}`;
     }
-    emoji += `\n🟩🟩🟩🟩🟩`;
     return emoji;
-  }, [previousWords])
+  }, [])
 
   const checkWord = () => {
     let isWord = getWiktionary();
@@ -186,11 +188,13 @@ function App() {
     let newCorrect = new Set<string>();
     let newIncorrect = new Set(word);
     if (word.join('') === wordOfTheDay.join('')) {
+      newColors = [GREEN, GREEN, GREEN, GREEN, GREEN];
       console.log('Pobijedili ste');
-      setEmojiText(getEmoji());
+      setEmojiText(getEmoji([...previousWords, { word: word, colors: newColors }], true));
       setShowPopup(true);
       setHasWon(true);
-      setColors([GREEN, GREEN, GREEN, GREEN, GREEN]);
+      setGameOver(true);
+      setColors(newColors);
       return;
     } else {
 
@@ -221,19 +225,26 @@ function App() {
 
 
     }
-    if (previousWords.length >= 5) {
-      alert('Ostali ste bez pokušaja, rijec je bila: ' + wordOfTheDay.join(''));
-      return;
-    }
     setCorrect(Array.from(new Set([...Array.from(newCorrect), ...correct])));
     setIncorrect(Array.from(new Set([...Array.from(newIncorrect), ...incorrect])));
     setPreviousWords([...previousWords, { word: word, colors: newColors }]);
+    if (previousWords.length >= 5) {
+      setEmojiText(getEmoji([...previousWords, { word: word, colors: newColors }], false));
+      setShowPopup(true);
+      setHasWon(false);
+      setGameOver(true);
+      setColors(newColors);
+
+      return;
+    }
+    
     setColors(['white', 'white', 'white', 'white', 'white']);
     setWord([]);
 
   }
 
   const acceptLetter = useCallback((key: string) => {
+    if (gameOver) return;
     if (key === 'Backspace') {
       setWord(word.slice(0, -1));
     }
@@ -254,14 +265,14 @@ function App() {
         }
       }
     }
-  }, [word]); // eslint-disable-line
+  }, [word, gameOver]); // eslint-disable-line
 
 
 
   const getKeyFromPhisycalKeyboard = useCallback(
     (e: KeyboardEvent) => {
       acceptLetter(e.key);
-    }, [acceptLetter])
+    }, [acceptLetter, gameOver])
 
   useEffect(() => {
     document.addEventListener('keydown', getKeyFromPhisycalKeyboard);
@@ -269,7 +280,7 @@ function App() {
       document.removeEventListener('keydown', getKeyFromPhisycalKeyboard);
     }
 
-  }, [word, getKeyFromPhisycalKeyboard])
+  }, [word, getKeyFromPhisycalKeyboard, gameOver])
 
   const toggleRandomMode = () => {
     if (previousWords.length > 0) {
@@ -315,6 +326,7 @@ function App() {
           guesses={previousWords.map(p => p.word.join(""))}
           emoji={emojiText}
           hide={() => setShowPopup(false)}
+          hasWon={hasWon}
         />
       }
       <div style={styles.mainflexWrapper}>
@@ -330,7 +342,7 @@ function App() {
         </div>
         <Keyboard correct={correct} incorrect={incorrect} sendKeyPress={(key) => acceptLetter(key)} />
       </div>
-      {hasWon && <div
+      {gameOver && <div
         style={{
           position: 'absolute',
           left: 5,
@@ -401,15 +413,15 @@ const Guesses: FC<{ word: string[], colors: string[] }> = ({ word, colors }) => 
 
 
 
-const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[], emoji: string; hide: () => void }> = ({ wordOfTheDay, guesses, emoji, hide }) => {
+const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[], emoji: string; hide: () => void, hasWon: boolean }> = ({ wordOfTheDay, guesses, emoji, hide, hasWon }) => {
 
 
   return (
     <div
       style={styles.bravoPopup}
     >
-      <h1>Bravo!</h1>
-      <h3>Pokusaji: <strong>{guesses.length + 1}/6</strong></h3>
+      <h1>{hasWon ? 'Bravo!' : 'Ostali ste bez pokušaja!'}</h1>
+      <h3>Pokusaji: <strong>{hasWon ? guesses.length : "X"}/6</strong></h3>
       <h1>{wordOfTheDay}</h1>
       <pre>{emoji}</pre>
       <button
