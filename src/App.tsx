@@ -414,9 +414,21 @@ const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[], emoji: string; h
       <pre>{emoji}</pre>
       <button
         style={styles.greebButton}
-        onClick={() => {
-          // set clipboard content to emoji
-          navigator.clipboard.writeText(emoji);
+        onClick={async() => {
+          if (navigator.share) {
+            try {
+              await navigator.share({
+                title: "Check this out!",
+                text: "I found something interesting.",
+                url: window.location.href,
+              });
+              console.log("Shared successfully");
+            } catch (error) {
+              console.error("Error sharing:", error);
+            }
+          } else {
+            navigator.clipboard.writeText(emoji);
+          }
         }}
       >Podijeli</button>
       <div
