@@ -430,10 +430,10 @@ const BravoPopup: FC<{ wordOfTheDay: string, guesses: string[], emoji: string; h
           if (navigator.share) {
             try {
               await navigator.share({
-                title: emoji,
+                title: 'Rijecle',
+                text: emoji + '\n',
                 url: window.location.href,
               });
-              console.log("Shared successfully");
             } catch (error) {
               console.error("Error sharing:", error);
             }
